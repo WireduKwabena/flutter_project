@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 class HomeController extends GetxController with StateMixin<Weather> {
   late StreamSubscription<InternetConnectionStatus> _listener;
 
-
   final RxDouble _latitude = 0.0.obs;
   final RxDouble _longitude = 0.0.obs;
   final RxString _locationName = "Madina".obs;
@@ -23,7 +22,6 @@ class HomeController extends GetxController with StateMixin<Weather> {
   RxInt getConnectionStatus() => connectionStatus;
   final weather = Weather().obs;
 
-
   @override
   void onInit() {
     networkListener();
@@ -31,18 +29,22 @@ class HomeController extends GetxController with StateMixin<Weather> {
   }
 
   networkListener() {
-    _listener = InternetConnectionChecker().onStatusChange.listen(
-      (InternetConnectionStatus status) {
-        switch (status) {
-          case InternetConnectionStatus.connected:
-            getConnectionStatus().value = 1;
-            break;
-          case InternetConnectionStatus.disconnected:
-            getConnectionStatus().value = 0;
-            break;
-        }
-      },
-    );
+    try {
+      _listener = InternetConnectionChecker().onStatusChange.listen(
+        (InternetConnectionStatus status) {
+          switch (status) {
+            case InternetConnectionStatus.connected:
+              getConnectionStatus().value = 1;
+              break;
+            case InternetConnectionStatus.disconnected:
+              getConnectionStatus().value = 0;
+              break;
+          }
+        },
+      );
+    } catch (exception) {
+      return Future.error(exception);
+    }
   }
 
   @override
@@ -53,9 +55,9 @@ class HomeController extends GetxController with StateMixin<Weather> {
 
   @override
   void onClose() {
-    
     _listener.cancel();
   }
+
 // Get Device Location using device longitude and latitude also get the weather data for known location
   _getCurrentLocation() async {
     try {
@@ -100,7 +102,7 @@ class HomeController extends GetxController with StateMixin<Weather> {
         });
       });
     } catch (exception) {
-      // incase of any error, pass the error or exception to status and add null to change 
+      // incase of any error, pass the error or exception to status and add null to change
       change(null, status: RxStatus.error(exception.toString()));
       return Future.error(exception);
     }
@@ -109,6 +111,7 @@ class HomeController extends GetxController with StateMixin<Weather> {
   refresher() {
     return _getCurrentLocation();
   }
+
 // method to get weather data by location instead of lon. and lat.
   receiver() {
     try {
@@ -123,6 +126,7 @@ class HomeController extends GetxController with StateMixin<Weather> {
       change(null, status: RxStatus.error(exception.toString()));
     }
   }
+
 // set date format using epoch values
   String getDate(final day) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch(day * 1000);
