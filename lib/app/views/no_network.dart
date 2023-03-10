@@ -41,14 +41,20 @@ class NoNetworkWidget extends GetView {
                       color: Colors.white,
                       fontSize: 15,
                       fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple),
-                  onPressed: () {
-                    controller.refresher();
-                  },
-                  child: const Text('Retry'))
+
+
+
+              // const SizedBox(height: 10),
+              // ElevatedButton(
+              //     style: ElevatedButton.styleFrom(
+              //         backgroundColor: Colors.deepPurple),
+              //     onPressed: () {
+              //       controller.refresher();
+              //     },
+              //     child: const Text('Retry'))
+
+
+              
             ]),
       ),
     )));

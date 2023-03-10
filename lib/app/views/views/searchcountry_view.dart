@@ -22,6 +22,46 @@ class _SearchcountryViewState extends State<SearchcountryView> {
   final countryController = TextEditingController();
 
   final cityController = TextEditingController();
+  List countrySearch = [];
+  List citySearch = [];
+
+  void _countryData(String query) {
+    setState(() {
+      isDropDownClicked = true;
+      isCityDropDownClicked = false;
+      countrySearch = [];
+      for (Map<String, dynamic> country in CountriesData.cityData) {
+        if (country['country'].toLowerCase().contains(query.toLowerCase())) {
+          countrySearch.add(country['country']);
+        }
+      }
+    });
+  }
+
+  void _cityData(String query) {
+    setState(() {
+      isCityDropDownClicked = true;
+      citySearch = [];
+      for (Map<String, dynamic> country in CountriesData.cityData) {
+        country['city'].forEach((city) {
+          if (city.toLowerCase().contains(query.toLowerCase())) {
+            citySearch.add(city);
+          }
+        });
+      }
+    });
+  }
+
+  void _myItemIndex(String item) {
+    int? index;
+    countryController.text = item;
+    index = CountriesData.cityData
+        .indexWhere((element) => element['country'] == item);
+    selectedIndex = index;
+    setState(() {
+      isDropDownClicked = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +94,9 @@ class _SearchcountryViewState extends State<SearchcountryView> {
                                 children: [
                                   TextField(
                                     controller: countryController,
+                                    onChanged: (value) {
+                                      _countryData(value);
+                                    },
                                     keyboardType: TextInputType.text,
                                     decoration: InputDecoration(
                                       suffixIcon: GestureDetector(
@@ -91,6 +134,9 @@ class _SearchcountryViewState extends State<SearchcountryView> {
                               width: MediaQuery.of(context).size.width * 0.47,
                               child: TextField(
                                 controller: cityController,
+                                onChanged: (val) {
+                                  selectedIndex == null ? null : _cityData(val);
+                                },
                                 keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
                                   suffixIcon: GestureDetector(
@@ -149,24 +195,37 @@ class _SearchcountryViewState extends State<SearchcountryView> {
                                         0.47,
                                     height: 400,
                                     color: Colors.grey.shade200,
-                                    child: ListView.builder(
-                                        itemCount:
-                                            CountriesData.cityData.length,
-                                        itemBuilder: ((context, index) {
-                                          return ListTile(
-                                              title: Text(CountriesData
-                                                  .cityData[index]["country"]),
-                                              onTap: () {
-                                                selectedIndex = index;
-                                                countryController.text =
-                                                    CountriesData
-                                                            .cityData[index]
-                                                        ["country"];
-                                                setState(() {
-                                                  isDropDownClicked = false;
-                                                });
-                                              });
-                                        })))
+                                    child: countrySearch.isNotEmpty
+                                        ? ListView.builder(
+                                            itemCount: countrySearch.length,
+                                            itemBuilder: ((context, index) {
+                                              return ListTile(
+                                                  title: Text(
+                                                      countrySearch[index]),
+                                                  onTap: () {
+                                                    _myItemIndex(
+                                                        countrySearch[index]);
+                                                  });
+                                            }))
+                                        : ListView.builder(
+                                            itemCount:
+                                                CountriesData.cityData.length,
+                                            itemBuilder: ((context, index) {
+                                              return ListTile(
+                                                  title: Text(CountriesData
+                                                          .cityData[index]
+                                                      ["country"]),
+                                                  onTap: () {
+                                                    selectedIndex = index;
+                                                    countryController.text =
+                                                        CountriesData
+                                                                .cityData[index]
+                                                            ["country"];
+                                                    setState(() {
+                                                      isDropDownClicked = false;
+                                                    });
+                                                  });
+                                            })))
                                 : const SizedBox(),
                             isCityDropDownClicked
                                 ? Container(
@@ -174,25 +233,44 @@ class _SearchcountryViewState extends State<SearchcountryView> {
                                         0.47,
                                     height: 400,
                                     color: Colors.grey.shade200,
-                                    child: ListView.builder(
-                                        itemCount: CountriesData
-                                            .cityData[selectedIndex!]["city"]
-                                            .length,
-                                        itemBuilder: ((context, index) {
-                                          return ListTile(
-                                              title: Text(CountriesData
-                                                      .cityData[selectedIndex!]
-                                                  ["city"][index]),
-                                              onTap: () {
-                                                cityController.text =
-                                                    CountriesData.cityData[
-                                                            selectedIndex!]
-                                                        ["city"][index];
-                                                setState(() {
-                                                  isCityDropDownClicked = false;
-                                                });
-                                              });
-                                        })))
+                                    child: citySearch.isNotEmpty
+                                        ? ListView.builder(
+                                            itemCount: citySearch.length,
+                                            itemBuilder: ((context, index) {
+                                              return ListTile(
+                                                  title:
+                                                      Text(citySearch[index]),
+                                                  onTap: () {
+                                                    cityController.text =
+                                                        citySearch[index];
+                                                    setState(() {
+                                                      isCityDropDownClicked =
+                                                          false;
+                                                    });
+                                                  });
+                                            }))
+                                        : ListView.builder(
+                                            itemCount: CountriesData
+                                                .cityData[selectedIndex!]
+                                                    ["city"]
+                                                .length,
+                                            itemBuilder: ((context, index) {
+                                              return ListTile(
+                                                  title: Text(
+                                                      CountriesData.cityData[
+                                                              selectedIndex!]
+                                                          ["city"][index]),
+                                                  onTap: () {
+                                                    cityController.text =
+                                                        CountriesData.cityData[
+                                                                selectedIndex!]
+                                                            ["city"][index];
+                                                    setState(() {
+                                                      isCityDropDownClicked =
+                                                          false;
+                                                    });
+                                                  });
+                                            })))
                                 : const SizedBox()
                           ],
                         ),
