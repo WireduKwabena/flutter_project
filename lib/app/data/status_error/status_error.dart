@@ -7,8 +7,6 @@ class StatusError {
 
   StatusError({this.error});
 
-  getError() => error;
-
   factory StatusError.fromMap(Map<String, dynamic> data) => StatusError(
         error: data['error'] == null
             ? null

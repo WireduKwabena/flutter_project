@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'dart:async';
 import '../../../data/providers/weather_provider.dart';
+import '../../../data/status_error/status_error.dart';
 import '../../../data/weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-//import '../../../data/status_error/status_error.dart';
 import 'package:intl/intl.dart';
 
 class HomeController extends GetxController with StateMixin<Weather> {
@@ -25,9 +25,9 @@ class HomeController extends GetxController with StateMixin<Weather> {
   RxString getDefaultLocation() => _defaultLocationName;
 
   RxInt getConnectionStatus() => connectionStatus;
-  final /*Rx<Weather?>?*/ weather = Weather().obs;
+  final  weather = Weather().obs;
 
- // final  errorMessage = StatusError().obs;
+ final  errorMessage = StatusError();
 
   @override
   void onInit() {
