@@ -5,7 +5,7 @@ import '../weather/weather.dart';
 
 class WeatherProvider extends GetConnect {
   Weather? weather;
-  StatusError? error;
+  // StatusError? error;
   // final otherKeys = '9dea01a114f3ce4be85adca999752a81';
   final String apiKey = "815c507573cc441bb2f04227221112";
 
@@ -31,7 +31,7 @@ class WeatherProvider extends GetConnect {
       if (response.statusCode == 400 ||
           response.statusCode == 401 ||
           response.statusCode == 403) {
-        error = StatusError.fromMap(response.body);
+         StatusError.fromMap(response.body);
         //return error;
       } else if (response.status.hasError) {
         return Future.error(response.statusText!);

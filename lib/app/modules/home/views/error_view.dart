@@ -26,7 +26,7 @@ class ErrorView extends GetView<HomeController> {
                       child: Icon(Icons.warning, color: Colors.red, size: 35)),
                   const SizedBox(width: 10),
                   Text(
-                      "Error(${weatherController.errorMessage.error?.code})" /**/,
+                      "Error(${weatherController.errorMessage.error?.code! ?? "Unavailable"})" /**/,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -36,10 +36,9 @@ class ErrorView extends GetView<HomeController> {
               ),
               const SizedBox(height: 20),
               Text(
-                  "${weatherController.errorMessage.error?.message}.\n pull to refresh!",
+                  "${weatherController.errorMessage.error?.message! ?? "No matching location for your search."}.\n pull to refresh!",
                   style: const TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
                     fontSize: 15,
                   )),
               const SizedBox(height: 20),
@@ -64,14 +63,12 @@ class ErrorView extends GetView<HomeController> {
                     child: const Text("Search,",
                         style: TextStyle(
                           color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 15,
                         ))),
                 const Text(" for other locations of your choice.",
                     style: TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 15,
                     )),
               ]),
             ]));
