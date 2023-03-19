@@ -49,7 +49,10 @@ class CurrentView extends GetView<HomeController> {
                     height: 25,
                     width: 25),
                 const SizedBox(width: 5),
-                Text(items!.getLocationDetails().name!,
+                Text(
+                    items!.getLocationDetails().name!.length > 10
+                        ? "${items!.getLocationDetails().name!.substring(0, 10)}..."
+                        : items!.getLocationDetails().name!,
                     style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,

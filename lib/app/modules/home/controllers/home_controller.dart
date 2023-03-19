@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'dart:async';
 import '../../../data/providers/weather_provider.dart';
 import '../../../data/weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+//import '../../../data/status_error/status_error.dart';
 import 'package:intl/intl.dart';
 
 class HomeController extends GetxController with StateMixin<Weather> {
@@ -11,6 +14,7 @@ class HomeController extends GetxController with StateMixin<Weather> {
 
   final RxDouble _latitude = 0.0.obs;
   final RxDouble _longitude = 0.0.obs;
+  final RxString _defaultLocationName = "...".obs;
   final RxString _locationName = "Madina".obs;
 
   final RxInt connectionStatus = 0.obs;
@@ -18,9 +22,12 @@ class HomeController extends GetxController with StateMixin<Weather> {
   RxDouble getLatitude() => _latitude;
   RxDouble getLongitude() => _longitude;
   RxString getLocation() => _locationName;
+  RxString getDefaultLocation() => _defaultLocationName;
 
   RxInt getConnectionStatus() => connectionStatus;
-  final weather = Weather().obs;
+  final /*Rx<Weather?>?*/ weather = Weather().obs;
+
+ // final  errorMessage = StatusError().obs;
 
   @override
   void onInit() {
@@ -51,6 +58,7 @@ class HomeController extends GetxController with StateMixin<Weather> {
   void onReady() {
     _getCurrentLocation();
     super.onReady();
+    //print(_defaultLocationName.value);
   }
 
   @override
@@ -89,17 +97,38 @@ class HomeController extends GetxController with StateMixin<Weather> {
       return await Geolocator.getCurrentPosition(
               forceAndroidLocationManager: true,
               desiredAccuracy: LocationAccuracy.high)
-          .then((value) {
+          .then((value) async {
         _latitude.value = value.latitude;
         _longitude.value = value.longitude;
+
+        List<Placemark> placemarks =
+            await placemarkFromCoordinates(_latitude.value, _longitude.value);
+        Placemark places = placemarks[0];
+        if (kDebugMode) {
+          print(places);
+        }
+        _defaultLocationName.value = places.locality!;
+
+        //findDefaultLocation(, );
+
 // get weather data for the identified location
         return WeatherProvider()
-            .getWeather(value.latitude, value.longitude)
+            .getWeatherOnLocation(_defaultLocationName.value)
+            .then((value) {
+          if (value != null) {
+            weather.value = value;
+            change(weather.value, status: RxStatus.success());
+          } else {
+            change(null, status: RxStatus.success());
+          }
+        });
+        /*WeatherProvider()
+            .getWeather(_latitude.value , _longitude.value)
             .then((value) {
           weather.value = value!;
           // pass the recieved weather data and set status to success in change
           change(weather.value, status: RxStatus.success());
-        });
+        });*/
       });
     } catch (exception) {
       // incase of any error, pass the error or exception to status and add null to change
@@ -119,8 +148,12 @@ class HomeController extends GetxController with StateMixin<Weather> {
       return WeatherProvider()
           .getWeatherOnLocation(_locationName.value)
           .then((value) {
-        weather.value = value!;
-        change(weather.value, status: RxStatus.success());
+        if (value != null) {
+          weather.value = value;
+          change(weather.value, status: RxStatus.success());
+        } else {
+          change(null, status: RxStatus.success());
+        }
       });
     } catch (exception) {
       change(null, status: RxStatus.error(exception.toString()));
@@ -157,4 +190,13 @@ class HomeController extends GetxController with StateMixin<Weather> {
     String time = DateFormat("jm").format(date);
     return time;
   }
+
+  // Future<void> findDefaultLocation(double lat, double lon) async {
+  //   try {
+
+  //     //print(_defaultLocationName.value);
+  //   } catch (exception) {
+  //     return Future.error(exception);
+  //   }
+  // }
 }
