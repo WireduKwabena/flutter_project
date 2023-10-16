@@ -27,3 +27,4 @@ class Error {
   // /// Converts [Error] to a JSON string.
 	// String toJson() => json.encode(toMap());
 }
+

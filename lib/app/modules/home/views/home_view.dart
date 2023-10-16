@@ -140,10 +140,10 @@ class HomeView extends GetView<HomeController> {
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       alignment: Alignment.center,
-      child: Column(
+      child:  const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
+          children: [
             CircularProgressIndicator(),
             SizedBox(height: 15),
             Text('Loading...',
@@ -156,8 +156,3 @@ class HomeView extends GetView<HomeController> {
   }
 }
 
-// if (controller.checkIsLoading().isTrue ||
-          //     controller.checkIsFromSearchBar().isTrue) {
-          //   
-          // } else {
-          

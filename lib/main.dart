@@ -11,6 +11,14 @@ void main() {
     GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Application",
+      theme:ThemeData(
+        useMaterial3:true,
+        colorScheme:ColorScheme.fromSeed(seedColor:Colors.blue),
+      ),
+      darkTheme:ThemeData(
+        useMaterial3:true,
+        brightness:Brightness.dark,
+      ),
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     ),
